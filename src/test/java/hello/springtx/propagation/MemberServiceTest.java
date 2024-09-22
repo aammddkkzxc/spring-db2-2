@@ -46,4 +46,15 @@ class MemberServiceTest {
         assertTrue(logRepository.find(username).isEmpty());
     }
 
+    @Test
+    @DisplayName("트랜잭션 전파 예제 모두 같은 커넥션 사용")
+    void outerTxOn_success() {
+        //given
+        String username = "outerTxOn_success";
+        //when
+        memberService.joinV1(username);
+        //then: 모든 데이터가 정상 저장된다.
+        assertTrue(memberRepository.find(username).isPresent());
+        assertTrue(logRepository.find(username).isPresent());
+    }
 }
