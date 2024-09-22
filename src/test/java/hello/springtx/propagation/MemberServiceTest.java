@@ -57,4 +57,18 @@ class MemberServiceTest {
         assertTrue(memberRepository.find(username).isPresent());
         assertTrue(logRepository.find(username).isPresent());
     }
+
+    @Test
+    @DisplayName("런타임 예외가 서비스단 까지 올라왔는데, 예외 처리 안하는 경우. 모두 롤백됨")
+    void outerTxOn_fail() {
+
+        String username = "로그예외_outerTxOn_fail";
+
+        assertThatThrownBy(() -> memberService.joinV1(username))
+                .isInstanceOf(RuntimeException.class);
+
+
+        assertTrue(memberRepository.find(username).isEmpty());
+        assertTrue(logRepository.find(username).isEmpty());
+    }
 }
