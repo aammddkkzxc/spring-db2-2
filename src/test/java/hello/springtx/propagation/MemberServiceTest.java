@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -31,6 +32,18 @@ class MemberServiceTest {
         //then: 모든 데이터가 정상 저장된다.
         assertTrue(memberRepository.find(username).isPresent());
         assertTrue(logRepository.find(username).isPresent());
+    }
+
+    @Test
+    @DisplayName("각각 별도의 트랜잭션 로그만 런타임 예외 터져서 롤백")
+    void outerTxOff_fail() {
+
+        String username = "로그예외_outerTxOff_fail";
+
+        assertThatThrownBy(() -> memberService.joinV1(username)).isInstanceOf(RuntimeException.class);
+
+        assertTrue(memberRepository.find(username).isPresent());
+        assertTrue(logRepository.find(username).isEmpty());
     }
 
 }
